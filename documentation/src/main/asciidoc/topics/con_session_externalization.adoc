@@ -11,10 +11,7 @@ ifdef::productized[]
 endif::productized[]
 
 Application Elasticity::
-Externalizing HTTP sessions to {brandname} keeps your {wildflybrandname} application cluster stateless, which eliminates the need to re-balance data when nodes join or leave {wildflybrandname} clusters. Likewise, when you upgrade your {wildflybrandname} cluster, nodes can retrieve sessions as you bring them online so that you do not experience downtime during the upgrade.
+Externalizing HTTP sessions to {brandname} keeps your {wildflybrandname} application cluster stateless, which makes it easier to scale up and down to meet demand.
 
 Session Failover Across Data Centers::
 When data centers can go offline, load balancers redirect incoming requests to {wildflybrandname} clusters running in a different locations. Applications can seamlessly retrieve the session data from {brandname} when this failover occurs so that there is no loss of service.
-
-Reduced Memory Footprint::
-Offloading session data from your application layer to {brandname} increases performance and improves memory optimization operations like garbage collection.

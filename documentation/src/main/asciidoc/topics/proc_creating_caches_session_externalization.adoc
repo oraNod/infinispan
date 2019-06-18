@@ -1,6 +1,8 @@
 Create a cache on your {brandname} cluster to act as a remote store for HTTP session data.
 
-Either `distributed-cache` or `replicated-cache` is suitable for most use cases.
+Either `distributed-cache` or `replicated-cache` is suitable for most use cases. In general the caching strategy you use depends on the heap size of each {brandname} node as well as the expected session volume calculated as follows:
+
+`session size * number of active sessions`
 
 [IMPORTANT]
 ====
