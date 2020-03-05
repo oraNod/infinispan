@@ -1,8 +1,9 @@
 [[cache_api]]
-= The Cache API
+= Cache API
 
-== The Cache interface
-{brandname}'s Caches are manipulated through the link:{javadocroot}/org/infinispan/Cache.html[Cache] interface.
+== Cache interface
+{brandname} provides a link:{javadocroot}/org/infinispan/Cache.html[Cache]
+interface for creating, configuring, and managing Caches.
 
 A Cache exposes simple methods for adding, retrieving and removing entries, including atomic mechanisms exposed by the JDK's ConcurrentMap interface.  Based on the cache mode used, invoking these methods will trigger a number of things to happen, potentially even including replicating an entry to a remote node or looking up an entry from a remote node, or potentially a cache store.
 
@@ -47,7 +48,6 @@ In addition to the simple Cache interface, {brandname} offers an link:{javadocro
 include::code_examples/GetAdvancedCache.java[]
 ----
 
-
 === Flags
 Flags are applied to regular cache methods to alter the behavior of certain methods.  For a list of all available flags, and their effects, see the link:{javadocroot}/org/infinispan/context/Flag.html[Flag] enumeration.  Flags are applied using link:{javadocroot}/org/infinispan/AdvancedCache.html#withFlags-org.infinispan.context.Flag...-[AdvancedCache.withFlags()] .  This builder method can be used to apply any number of flags to a cache invocation, for example:
 
@@ -55,12 +55,6 @@ Flags are applied to regular cache methods to alter the behavior of certain meth
 ----
 include::code_examples/AdvancedCacheWithFlags.java[]
 ----
-
-=== Custom Interceptors
-
-The AdvancedCache interface also offers advanced developers a mechanism with which to attach custom interceptors.  Custom interceptors allow developers to alter the behavior of the cache API methods, and the AdvancedCache interface allows developers to attach these interceptors programmatically, at run-time.  See the AdvancedCache Javadocs for more details.
-
-//old_link: For more information on writing custom interceptors, see link:#custom_interceptors_chapter[Custom Interceptors].
 
 [[listeners_and_notifications]]
 ==  Listeners and Notifications
@@ -199,7 +193,7 @@ These are, in order of cost:
 * writing to a cache store (optional)
 * locking
 
-As of {brandname} 4.0, using the async methods will take the network calls and marshalling off the critical path.  For various technical reasons, writing to a cache store and acquiring locks, however, still happens in the caller's thread.  In future, we plan to take these offline as well.  See link:http://lists.jboss.org/pipermail/infinispan-dev/2010-January/002219.html[this developer mail list thread] about this topic.
+Using the async methods will take the network calls and marshalling off the critical path.  For various technical reasons, writing to a cache store and acquiring locks, however, still happens in the caller's thread.
 
 === Notifying futures
 Strictly, these methods do not return JDK Futures, but rather a sub-interface known as a link:{javadocroot}/org/infinispan/commons/util/concurrent/NotifyingFuture.html[NotifyingFuture] .  The main difference is that you can attach a listener to a NotifyingFuture such that you could be notified when the future completes.  Here is an example of making use of a notifying future:
@@ -208,9 +202,6 @@ Strictly, these methods do not return JDK Futures, but rather a sub-interface kn
 ----
 include::code_examples/ListenerFuture.java[]
 ----
-
-=== Further reading
-The Javadocs on the link:{javadocroot}/org/infinispan/Cache.html[Cache] interface has some examples on using the asynchronous API, as does link:http://infinispan.blogspot.com/2009/05/whats-so-cool-about-asynchronous-api.html[this article] by Manik Surtani introducing the API.
 
 ==  Invocation Flags
 An important aspect of getting the most of {brandname} is the use of per-invocation flags in order to provide specific behaviour to each particular cache call. By doing this, some important optimizations can be implemented potentially saving precious time and network resources. One of the most popular usages of flags can be found right in Cache API, underneath the link:{javadocroot}/org/infinispan/Cache.html#putForExternalRead-K-V-[putForExternalRead()] method which is used to load an {brandname} cache with data read from an external resource. In order to make this call efficient, {brandname} basically calls a normal put operation passing the following flags: link:{javadocroot}/org/infinispan/context/Flag.html#FAIL_SILENTLY[FAIL_SILENTLY] , link:{javadocroot}/org/infinispan/context/Flag.html#FORCE_ASYNCHRONOUS[FORCE_ASYNCHRONOUS] , link:{javadocroot}/org/infinispan/context/Flag.html#ZERO_LOCK_ACQUISITION_TIMEOUT[ZERO_LOCK_ACQUISITION_TIMEOUT]

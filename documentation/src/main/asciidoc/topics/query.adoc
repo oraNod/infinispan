@@ -14,7 +14,8 @@ Indexing configuration relies on a schema definition, and for that {brandname} c
 and protobuf schemas for remote clients written in other languages. By standardizing on protobuf, {brandname} allows full interoperability
 between Java and non-Java clients.
 
-Apart from indexed queries, {brandname} can run queries over non-indexed data (link:#query_indexless[indexless queries]) and over partially indexed data (link:#query_hybrid[hybrid queries]).
+Apart from indexed queries, {brandname} can run queries over non-indexed or
+partially indexed data.
 
 In terms of Search APIs, {brandname} has its own query language called _link:#query_ickle[Ickle]_, which is string-based and adds support for full-text
 querying. The link:#query_dsl[Query DSL] can be used for both embedded and remote java clients when full-text is not required; for Java embedded clients

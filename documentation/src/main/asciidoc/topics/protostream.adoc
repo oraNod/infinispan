@@ -41,7 +41,7 @@ There are a few important notes we need to make about Protobuf messages:
 
 
 === Marshallers
-As described in the link:#proto_files[previous section], a fundamental concept of the Protobuf format is the definition
+A fundamental concept of the Protobuf format is the definition
 of messages in the .proto schema to determine how an entity is represented. However, in order for our Java
 applications to utilise the Protobuf format to transmit/store data, it's necessary for our Java objects to be encoded.
 This is handled by the ProtoStream library and its configured _Marshaller_ implementations, which convert plain old

@@ -221,12 +221,7 @@ To make entity classes available to the server, do the following:
 +
 {brandname} loads entity classes during boot. You cannot make entity classes available to {brandname} if the server is running.
 +
-ifdef::productized[]
-* Copy the `JAR` file to the *_$RHDG_HOME/standalone/deployments/_* directory.
-endif::productized[]
-ifndef::productized[]
-* Copy the `JAR` file to the *_$INFINISPAN_HOME/standalone/deployments/_* directory.
-endif::productized[]
+* Copy your `JAR` to the `/lib` directory of your {brandname} server installation.
 * Specify the `JAR` file as a module in the cache manager configuration, as in the following example:
 
 [source,xml,options="nowrap",subs=attributes+]
