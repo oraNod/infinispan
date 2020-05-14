@@ -1,0 +1,81 @@
+[id='rest_v2_create_protobuf']
+= Creating Protobuf Schemas
+Create a Protobuf schema across {brandname} clusters with `POST` requests that
+include the content of a protobuf file in the payload.
+
+If the schema already exists, the API responds with CONFLICT.
+
+If the schema is not valid, the schema is created but the API responds with BAD_REQUEST.
+The response payload contains the schema name and the error if such exist.
+
+[source,options="nowrap",subs=attributes+]
+----
+POST /rest/v2/protobuf/{schemaName}
+----
+
+[source,json,options="nowrap",subs=attributes+]
+----
+include::json_examples/rest_protobuf_create_update_schema_response.json[]
+----
+* `name` of the Protobuf schema
+* `error` null if the validation is 'success' or the error with message and cause if the schema is not correct.
+
+
+[id='rest_v2_get_protobuf']
+= Reading Protobuf Schemas
+Get the Protobuf schema content in {brandname} clusters with `GET` requests.
+
+[source,options="nowrap",subs=attributes+]
+----
+GET /rest/v2/protobuf/{schemaName}
+----
+
+
+[id='rest_v2_update_protobuf']
+= Updating Protobuf Schemas
+Update a Protobuf schema {brandname} clusters with `PUT` requests that
+include the content of a protobuf file in the payload.
+
+If the schema does not exist, the REST API will respond with
+a NOT_FOUND error.
+
+If the schema is not valid, the schema is updated but the API responds with BAD_REQUEST.
+The response payload contains the schema name and the error if such exist.
+
+[source,options="nowrap",subs=attributes+]
+----
+PUT /rest/v2/protobuf/{schemaName}
+----
+
+[source,json,options="nowrap",subs=attributes+]
+----
+include::json_examples/rest_protobuf_create_update_schema_response.json[]
+----
+* `name` of the Protobuf schema
+* `error` null if the validation is 'success' or the error with message and cause if the schema is not correct.
+
+[id='rest_v2_list_protobuf']
+= Deleting Protobuf Schemas
+Delete an existing Protobuf schema in {brandname} clusters with `DELETE` requests.
+
+[source,options="nowrap",subs=attributes+]
+----
+DELETE /rest/v2/protobuf/{schemaName}
+----
+
+
+[id='rest_v2_list_protobuf']
+= Listing Protobuf Schemas
+List all available Protobuf schemas in {brandname} clusters with `GET` requests.
+
+[source,options="nowrap",subs=attributes+]
+----
+GET /rest/v2/protobuf/
+----
+[source,json,options="nowrap",subs=attributes+]
+----
+include::json_examples/rest_protobuf_schemas_response.json[]
+----
+
+* `name` of the Protobuf schema
+* `error` null if the validation is 'success' or the error with message and cause if the schema is not correct.
