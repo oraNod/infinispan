@@ -204,3 +204,164 @@ include::json_examples/rest_cache_stats_response.json[]
 * `current_number_of_entries_in_memory` shows the total number of entries currently in all caches, excluding passivated entries.
 * `hit_ratio` provides the total percentage hit/(hit+miss) ratio for all caches.
 * `retrievals` shows the total number of `get()` operations.
+
+[id='rest_v2_backup_manager_create']
+= Create a Backup of {brandname} Cache Manager content
+Initiate the creation of a backup file (application/zip) containing all resources (Caches, Cache configurations, Counters, Proto schemas, Scripts)
+that are currently stored in the cache manager. The created backup file can then be retrieved via a subsequent
+link:#rest_v2_backup_manager_get[GET] operation.
+
+[source,options="nowrap",subs=attributes+]
+----
+POST /rest/v2/cache-managers/{cacheManagerName}/backups/{backupName}
+----
+
+Requests may optionally include a JSON payload that contains various parameters for the backup operation.
+
+.Json Parameters
+
+|===
+|Key |Required or Optional |Value
+
+|`directory`
+|OPTIONAL
+|The path of a directory on the server that should be used to create and ultimately store the backup file.
+
+|`resources`
+|OPTIONAL
+|A JSON object specifying the resources to include in the backup. If no resources are specified, then all
+resources are included in the backup. If one or more resource types are specified, then only the specified resources
+are included.
+
+|===
+
+include::backup_resources.adoc[]
+
+The following example shows how to create a backup, with all counters and only caches with the names `[cache1,cache2]`,
+in the specified directory.
+
+[source,json,options="nowrap",subs=attributes+]
+----
+include::json_examples/rest_backup_create_request_body.json[]
+----
+
+[id='rest_v2_backup_manager_list']
+= Get Backup Names
+Retrieve the names of all backups that are in progress, completed or in a failed state.
+
+[source,options="nowrap",subs=attributes+]
+----
+GET /rest/v2/cache-managers/{cacheManagerName}/backups
+----
+
+[id='rest_v2_backup_manager_head']
+= Checking Backup availability
+Verify that a backup operation has completed. A 200 response means that the resource is available, whereas 202
+indicates that the initial backup operation is still in progress.
+
+[source,options="nowrap",subs=attributes+]
+----
+HEAD /rest/v2/cache-managers/{cacheManagerName}/backups/{backupName}
+----
+
+[id='rest_v2_backup_manager_get']
+= Downloading a Backup file
+Download a completed backup file from the server. A 200 response means that the resource is available, whereas 202
+indicates that the initial backup operation is still in progress.
+
+[source,options="nowrap",subs=attributes+]
+----
+GET /rest/v2/cache-managers/{cacheManagerName}/backups/{backupName}
+----
+
+[id='rest_v2_backup_manager_delete']
+= Deleting a Backup file
+Delete a Backup from the {brandname} server. A 204 response means that the Backup has been deleted immediately, whereas
+a 202 response indicates that the backup is still in progress and the created file will be deleted once the backup has
+completed.
+
+[source,options="nowrap",subs=attributes+]
+----
+DELETE /rest/v2/cache-managers/{cacheManagerName}/backups/{backupName}
+----
+
+[id='rest_v2_restore_manager']
+= Restoring {brandname} Backups
+Restore content from a Backup file.
+
+[source,options="nowrap",subs=attributes+]
+----
+POST /rest/v2/cache-managers/{cacheManagerName}/backups?action=restore
+----
+
+[NOTE]
+The backup file must contain a container corresponding to `{cacheManagerName}` in order for the containers content to be restored.
+
+Supported content types:
+
+application/json::
+To be used if the backup file is already available on the server.
+
+.JSON Parameters
+
+|===
+|Key |Required or Optional |Value
+
+|`location`
+|REQUIRED
+|The path of the backup file to be restored.
+
+|`resources`
+|OPTIONAL
+|A JSON object specifying the resources to include in the backup. If no resources are specified, then all
+resources are included in the backup. If one or more resource types are specified, then only the specified resources
+are included.
+
+|===
+
+include::backup_resources.adoc[]
+
+The following example shows how to restore all counters from a backup file already located on the server.
+
+[source,json,options="nowrap",subs=attributes+]
+----
+include::json_examples/rest_backup_restore_request_body.json[]
+----
+
+multipart/form-data::
+Allows the backup zip file to be uploaded to the server with optional JSON parameters.
+
+.Form Data
+|===
+|Parameter |Content-Type |Required or Optional |Value
+
+|`backup`
+|`application/zip`
+|REQUIRED
+|The bytes of the backup file to be restored.
+
+|`resources`
+|`application/json`, `text/plain`
+|OPTIONAL
+|A JSON object of request parameters.
+
+|===
+
+.Example Request
+----
+Content-Type: multipart/form-data; boundary=5ec9bc07-f069-4662-a535-46069afeda32
+Content-Length: 7721
+
+--5ec9bc07-f069-4662-a535-46069afeda32
+Content-Disposition: form-data; name="resources"
+Content-Length: 23
+
+{"scripts":["test.js"]}
+--5ec9bc07-f069-4662-a535-46069afeda32
+Content-Disposition: form-data; name="backup"; filename="testManagerRestoreParameters.zip"
+Content-Type: application/zip
+Content-Length: 7353
+
+<zip-bytes>
+--5ec9bc07-f069-4662-a535-46069afeda32--
+----
