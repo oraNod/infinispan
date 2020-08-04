@@ -188,6 +188,21 @@ public class BlockingManagerImpl implements BlockingManager {
    }
 
    @Override
+   public <I> CompletionStage<Void> thenRunBlocking(CompletionStage<? extends I> stage, Runnable runnable, Object traceId) {
+      if (isCurrentThreadBlocking()) {
+         if (trace) {
+            log.tracef("Invoked thenRun on a blocking thread, joining %s in same blocking thread", traceId);
+         }
+         try {
+            return stage.thenRun(runnable);
+         } catch (Throwable t) {
+            return CompletableFutures.completedExceptionFuture(t);
+         }
+      }
+      return continueOnNonBlockingThread(stage.thenRunAsync(runnable, blockingExecutor), traceId);
+   }
+
+   @Override
    public <V> CompletionStage<V> whenCompleteBlocking(CompletionStage<V> stage,
          BiConsumer<? super V, ? super Throwable> biConsumer, Object traceId) {
       if (isCurrentThreadBlocking()) {
