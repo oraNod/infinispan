@@ -162,8 +162,8 @@ public interface Messages {
    @Message("The patch archive appears to have a corrupt entry for: %s")
    String patchCorruptArchive(PatchOperation operation);
 
-   @Message("Downloaded report '%s'")
-   String downloadedReport(String filename);
+   @Message("Downloaded file '%s'")
+   String downloadedFile(String filename);
 
    @Message(value = "Specify a username: ")
    String userToolUsername();
@@ -200,4 +200,7 @@ public interface Messages {
 
    @Message(value = "Attempted to use a different realm '%s' than the already existing one '%s'")
    IllegalArgumentException userToolWrongRealm(String realm1, String realm2);
+
+   @Message(value = "Backup path on the server must be absolute")
+   IllegalArgumentException backupAbsolutePathRequired();
 }
