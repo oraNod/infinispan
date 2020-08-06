@@ -1,0 +1,113 @@
+BACKUP(1)
+========
+:doctype: manpage
+
+
+NAME
+----
+backup - manage container backup creation and restoration.
+
+
+SYNOPSIS
+--------
+*backup create* ['OPTIONS']
+
+*backup delete* ['OPTIONS'] `BACKUP_NAME`
+
+*backup get* ['OPTIONS'] `BACKUP_NAME`
+
+*backup ls*
+
+*backup restore* ['OPTIONS'] `BACKUP_PATH`
+
+
+BACKUP CREATE OPTIONS
+---------------------
+*-d, --dir*='PATH'::
+The directory on the server to be used for creating and storing the backup.
+
+*-n, --name*='NAME'::
+The name of the backup.
+
+*--caches*='cache1,cache2,...'::
+List of caches to include, '*' indicates all available.
+
+*--cache-configs*='config1,config2,...'::
+List of cache configurations to include, '*' indicates all available.
+
+*--counters*='counter1,counter2,...'::
+List of counters to include, '*' indicates all available.
+
+*--proto-schemas*='schema1,schema2,...'::
+List of proto schemas to include, '*' indicates all available.
+
+*--scripts*='script1,script2,...'::
+List of scripts to include, '*' indicates all available.
+
+
+BACKUP GET OPTIONS
+------------------
+*--no-content*::
+No content is downloaded, but the command only returns once the backup has finished
+
+
+BACKUP RESTORE OPTIONS
+----------------------
+*-u, --upload*::
+Indicates that the path is a local file which must be uploaded to the server.
+
+*--caches*='cache1,cache2,...'::
+List of caches to include, '*' indicates all available.
+
+*--cache-configs*='config1,config2,...'::
+List of cache configurations to include, '*' indicates all available.
+
+*--counters*='counter1,counter2,...'::
+List of counters to include, '*' indicates all available.
+
+*--proto-schemas*='schema1,schema2,...'::
+List of proto schemas to include, '*' indicates all available.
+
+*--scripts*='script1,script2,...'::
+List of scripts to include, '*' indicates all available.
+
+
+EXAMPLES
+--------
+`backup create -n example-backup` +
+Initiates a backup of all container content with name `example-backup`.
+
+`backup create -d /some/server/dir` +
+Initiate a backup of all container content and store it on the server at path `/some/server/dir`.
+
+`backup create --caches=* --cache-configs=*` +
+Initiate a backup containing only cache and cache-config resources.
+
+`backup create --proto-schemas=schema1,schema2` +
+Initiate a backup containing only the named schema resources.
+
+`backup ls` +
+List all of the backups created on the server.
+
+`backup get example-backup` +
+Download the `example-backup` from the server, waiting for the backup to complete if it's still in progress.
+
+`backup restore /some/path/on/the/server` +
+Restore all content from a backup file accessible on the server.
+
+`backup restore -u /some/local/path` +
+Restore all content from a local backup file that is uploaded to the server.
+
+`backup restore /some/path/on/the/server --caches=*` +
+Restore only cache content from a backup file accessible on the server.
+
+`backup restore /some/path/on/the/server --proto-schemas=schema1,schema2` +
+Restore only the named schema resources from a backup file accessible on the server.
+
+`backup delete example-backup` +
+Delete the `example-backup` from the server.
+
+
+SEE ALSO
+--------
+drop(1)

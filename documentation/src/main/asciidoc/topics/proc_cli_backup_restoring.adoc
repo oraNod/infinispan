@@ -1,0 +1,32 @@
+= Restoring Backups
+
+{brandname} allows a container's content to be restored from a backup file created via the CLI.
+
+.Prerequisites
+. A backup file is accessible by the CLI locally, or by the {brandname} server.
+. The target container shares the same name as that included in the backup file.
+
+.Procedure
+
+. Create a CLI connection to {brandname}.
+. Run the [command]`backup restore` command with the appropriate options.
+.. Restore all content from a backup file accessible on the server
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup restore /some/path/on/the/server
+----
++
+.. Restore all content from a local backup file that is uploaded to the server
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup restore -u /some/local/path
+----
++
+.. Restore only cache content from a backup file
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup restore /some/path/on/the/server --caches=*
+----

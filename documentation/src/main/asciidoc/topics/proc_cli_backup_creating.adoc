@@ -1,0 +1,68 @@
+= Creating Backups
+
+{brandname} allows a container's content to be backed up to a .zip file so that cluster state can be restored at a later
+time if a cluster shutdown is required.
+
+[NOTE]
+====
+Ensure the cluster is no longer accepting write requests so that the created backup reflects the latest cluster state.
+====
+
+.Procedure
+
+. Create a CLI connection to {brandname}.
+. Run the [command]`backup create` command with the appropriate options.
+.. Initiate a backup of all container content with generated name.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup create
+----
++
+.. Initiate a backup of all container content with name `example-backup`.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup create -n example-backup
+----
++
+.. Initiate a backup of all container content and store it on the server at path `/some/server/dir`.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup create -d /some/server/dir
+----
++
+.. Initiate a backup containing only cache and cache-config resources.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup create --caches=* --cache-configs=*
+----
+.. Initiate a backup containing only the named schema resources.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup create --proto-schemas=schema1,schema2
+----
++
+. List all of the backups created on the server.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup ls
+----
++
+. Download the `example-backup` from the server, waiting for the backup to complete if it's still in progress.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup get example-backup
+----
++
+. Optionally delete the `example-backup` from the server.
++
+[source,json,options="nowrap",subs=attributes+]
+----
+[//containers/default]> backup delete example-backup
+----
