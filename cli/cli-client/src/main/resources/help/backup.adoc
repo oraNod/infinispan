@@ -24,52 +24,52 @@ SYNOPSIS
 BACKUP CREATE OPTIONS
 ---------------------
 *-d, --dir*='PATH'::
-The directory on the server to be used for creating and storing the backup.
+Specifies a directory on the server to create and store the backup archive.
 
 *-n, --name*='NAME'::
-The name of the backup.
+Defines a name for the backup archive.
 
 *--caches*='cache1,cache2,...'::
-List of caches to include, '*' indicates all available.
+Lists caches to back up. Use '*' to back up all caches.
 
 *--cache-configs*='config1,config2,...'::
-List of cache configurations to include, '*' indicates all available.
+Lists cache configurations to back up. Use '*' to back up all cache configurations.
 
 *--counters*='counter1,counter2,...'::
-List of counters to include, '*' indicates all available.
+Lists of counters to back up. Use '*' to back up all counters.
 
 *--proto-schemas*='schema1,schema2,...'::
-List of proto schemas to include, '*' indicates all available.
+Lists Protobuf schemas to back up. Use '*' to back up all schemas.
 
 *--scripts*='script1,script2,...'::
-List of scripts to include, '*' indicates all available.
+Lists scripts to back up. Use '*' to back up all scripts.
 
 
 BACKUP GET OPTIONS
 ------------------
 *--no-content*::
-No content is downloaded, but the command only returns once the backup has finished
+Does not download content. The command returns only when the backup operation is complete.
 
 
 BACKUP RESTORE OPTIONS
 ----------------------
 *-u, --upload*::
-Indicates that the path is a local file which must be uploaded to the server.
+Defines the path to a local backup archive that is uploaded to the server.
 
 *--caches*='cache1,cache2,...'::
-List of caches to include, '*' indicates all available.
+Lists caches to restore. Use '*' to restore all caches from the backup archive.
 
 *--cache-configs*='config1,config2,...'::
-List of cache configurations to include, '*' indicates all available.
+Lists cache configurations to restore. Use '*' to restore all cache configurations from the backup archive.
 
 *--counters*='counter1,counter2,...'::
-List of counters to include, '*' indicates all available.
+Lists counters to restore. Use '*' to restore all counters from the backup archive.
 
 *--proto-schemas*='schema1,schema2,...'::
-List of proto schemas to include, '*' indicates all available.
+Lists Protobuf schemas to restore. Use '*' to restore all schemas from the backup archive.
 
 *--scripts*='script1,script2,...'::
-List of scripts to include, '*' indicates all available.
+Lists scripts to restore. Use '*' to restore all scripts from the backup archive.
 
 
 EXAMPLES
@@ -78,34 +78,34 @@ EXAMPLES
 Initiates a backup of all container content with name `example-backup`.
 
 `backup create -d /some/server/dir` +
-Initiate a backup of all container content and store it on the server at path `/some/server/dir`.
+Initiates a backup of all container content and stores it on the server at path `/some/server/dir`.
 
 `backup create --caches=* --cache-configs=*` +
-Initiate a backup containing only cache and cache-config resources.
+Initiates a backup that contains only cache and cache configuration resources.
 
 `backup create --proto-schemas=schema1,schema2` +
-Initiate a backup containing only the named schema resources.
+Initiates a backup that contains the named schema resources only.
 
 `backup ls` +
-List all of the backups created on the server.
+Lists all backups available on the server.
 
 `backup get example-backup` +
-Download the `example-backup` from the server, waiting for the backup to complete if it's still in progress.
+Downloads the `example-backup` archive from the server. If the backup operation is in progress, the command waits for it to complete.
 
 `backup restore /some/path/on/the/server` +
-Restore all content from a backup file accessible on the server.
+Restores all content from a backup archive on the server.
 
 `backup restore -u /some/local/path` +
-Restore all content from a local backup file that is uploaded to the server.
+Restores all content from a local backup archive that is uploaded to the server.
 
 `backup restore /some/path/on/the/server --caches=*` +
-Restore only cache content from a backup file accessible on the server.
+Restores only cache content from a backup archive on the server.
 
 `backup restore /some/path/on/the/server --proto-schemas=schema1,schema2` +
-Restore only the named schema resources from a backup file accessible on the server.
+Restores only the named schema resources from a backup archive on the server.
 
 `backup delete example-backup` +
-Delete the `example-backup` from the server.
+Deletes the `example-backup` archive from the server.
 
 
 SEE ALSO

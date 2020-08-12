@@ -1,9 +1,11 @@
 [id='backup']
 :context: cli
-= Content Backup and Restore
-{brandname} allows content in the cluster to be backed up so that it can be restored after a cluster restart or migration.
+= Backing Up and Restoring {brandname} Clusters
+Create archives of {brandname} resources that you can download and use to
+restore clusters after restarts or migration from different versions.
 
 .Prerequisites
+
 * Start the {brandname} CLI.
 * Connect to a running {brandname} cluster.
 

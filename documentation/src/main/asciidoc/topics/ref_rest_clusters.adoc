@@ -24,32 +24,34 @@ POST /rest/v2/cluster?action=stop&server={server1_host}&server={server2_host}
 {brandname} responds with `200(OK)`.
 
 [id='rest_v2_backup_cluster']
-= Create a Backup of {brandname} cluster content
-Initiate the creation of a backup file (application/zip) containing all resources (Caches, Cache configurations, Counters, Proto schemas, Scripts)
-that are currently stored in the  cluster's cache container(s). The created backup file can then be retrieved via a subsequent
-link:#rest_v2_backup_manager_get[GET] operation.
+= Backing Up {brandname} Clusters
+Create backup archives, `application/zip`, that contain resources (caches, cache
+configurations, counters, Protobuf schemas, scripts, and so on) currently
+stored in the cache container for the cluster.
 
 [source,options="nowrap",subs=attributes+]
 ----
 POST /rest/v2/cluster/backups/{backupName}
 ----
 
-Requests may optionally include a JSON payload that contains various parameters for the backup operation.
+Optionally include a JSON payload with your request that contains parameters
+for the backup operation, as follows:
 
-.Json Parameters
+.JSON Parameters
 
 |===
 |Key |Required or Optional |Value
 
 |`directory`
 |OPTIONAL
-|The path of a directory on the server that should be used to create and ultimately store the backup file.
+|Specifies a location on the server to create and store the backup archive.
 
 |===
 
 [id='rest_v2_backup_cluster_list']
-= Get Backup Names
-Retrieve the names of all backups that are in progress, completed or in a failed state.
+= Listing Backups
+Retrieve the names of all backup operations that are in progress, completed, or
+failed.
 
 [source,options="nowrap",subs=attributes+]
 ----
@@ -57,9 +59,10 @@ GET /rest/v2/cluster/backups
 ----
 
 [id='rest_v2_backup_cluster_head']
-= Checking Backup availability
-Verify that a backup operation has completed. A 200 response means that the resource is available, whereas 202
-indicates that the initial backup operation is still in progress.
+= Checking Backup Availability
+Verify that a backup operation is complete. A `200` response indicates the
+backup archive is available. A `202` response indicates the backup operation is
+in progress.
 
 [source,options="nowrap",subs=attributes+]
 ----
@@ -67,9 +70,10 @@ HEAD /rest/v2/cluster/backups/{backupName}
 ----
 
 [id='rest_v2_backup_cluster_get']
-= Downloading a Backup file
-Download a completed backup file from the server. A 200 response means that the resource is available, whereas 202
-indicates that the initial backup operation is still in progress.
+= Downloading Backup Archives
+Download backup archives from the server. A `200` response indicates the
+backup archive is available. A `202` response indicates the backup operation is
+in progress.
 
 [source,options="nowrap",subs=attributes+]
 ----
@@ -77,10 +81,10 @@ GET /rest/v2/cluster/backups/{backupName}
 ----
 
 [id='rest_v2_backup_cluster_delete']
-= Deleting a Backup file
-Delete a Backup from the {brandname} server. A 204 response means that the Backup has been deleted immediately, whereas
-a 202 response indicates that the backup is still in progress and the created file will be deleted once the backup has
-completed.
+= Deleting Backup Archives
+Remove backup archives from the server. A `204` response indicates that the
+backup archive is deleted. A `202` response indicates that the backup operation
+is in progress but will be deleted when the operation completes.
 
 [source,options="nowrap",subs=attributes+]
 ----
@@ -88,22 +92,23 @@ DELETE /rest/v2/cluster/backups/{backupName}
 ----
 
 [id='rest_v2_restore_cluster']
-= Restore {brandname} cluster content
-Restore content from a Backup file.
+= Restoring {brandname} Cluster Resources
+Apply resources in a backup archive to restore {brandname} clusters.
+
+[IMPORTANT]
+====
+You can restore resources only if the container name in the backup archive
+matches the container name for the cluster.
+====
 
 [source,options="nowrap",subs=attributes+]
 ----
 POST /rest/v2/cluster?action=restore
 ----
 
-[NOTE]
-The uploaded backup file must contain a container corresponding to `{cacheManagerName}` in order for the containers content
-to be restored.
-
-Supported content types:
-
-application/json::
-To be used if the backup file is already available on the server.
+== Restoring from Backup Archives on {brandname} Server
+Use the `application/json` content type with your POST request to back up from
+an archive that is available on the server.
 
 .JSON Parameters
 
@@ -112,27 +117,26 @@ To be used if the backup file is already available on the server.
 
 |`location`
 |REQUIRED
-|The path of the backup file to be restored.
+|Specifies the path of the backup archive to restore.
 
 |`resources`
 |OPTIONAL
-|A JSON object specifying the resources to include in the backup. If no resources are specified, then all
-resources are included in the backup. If one or more resource types are specified, then only the specified resources
-are included.
+|Specifies the resources to restore, in JSON format. The default is to restore all resources. If you specify one or more resources, then {brandname} restores only those resources. See the _Resource Parameters_ table for more information.
 
 |===
 
 include::backup_resources.adoc[]
 
-The following example shows how to restore all counters from a backup file already located on the server.
+The following example restores all counters from a backup archive on the server:
 
 [source,json,options="nowrap",subs=attributes+]
 ----
 include::json_examples/rest_backup_restore_request_body.json[]
 ----
 
-multipart/form-data::
-The backup zip file to be uploaded to the server and then restored.
+== Restoring from Local Backup Archives
+Use the `multipart/form-data` content type with your POST request to upload a
+local backup archive to the server.
 
 .Form Data
 |===
@@ -141,7 +145,7 @@ The backup zip file to be uploaded to the server and then restored.
 |`backup`
 |`application/zip`
 |REQUIRED
-|The bytes of the backup file to be restored.
+|Specifies the bytes of the backup archive to restore.
 |===
 
 .Example Request

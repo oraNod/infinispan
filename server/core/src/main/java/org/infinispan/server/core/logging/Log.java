@@ -114,16 +114,16 @@ public interface Log extends BasicLogger {
    @Message(value = "Illegal type for parameter '%s': %s", id = 5038)
    IllegalArgumentException illegalParameterType(String parameter, Class<?> type);
 
-   @Message(value = "Unable to create cluster backup", id = 5039)
+   @Message(value = "Cannot create cluster backup", id = 5039)
    CacheException errorCreatingBackup(@Cause Throwable cause);
 
-   @Message(value = "Unable to restore cluster backup '%s'", id = 5040)
+   @Message(value = "Cannot restore cluster backup '%s'", id = 5040)
    CacheException errorRestoringBackup(Path path, @Cause Throwable cause);
 
-   @Message(value = "Unable to perform backup, backup currently in progress", id = 5041)
+   @Message(value = "Cannot perform backup, backup currently in progress", id = 5041)
    CacheException backupInProgress();
 
-   @Message(value = "Unable to restore content, restore currently in progress", id = 5042)
+   @Message(value = "Cannot restore content, restore currently in progress", id = 5042)
    CacheException restoreInProgress();
 
    @LogMessage(level = INFO)
@@ -139,7 +139,7 @@ public interface Log extends BasicLogger {
    void initiatingClusterRestore(Path backup);
 
    @LogMessage(level = INFO)
-   @Message(value = "Backup restore complete", id = 5046)
+   @Message(value = "Backup complete", id = 5046)
    void restoreComplete();
 
    @Message(value = "%s '%s' not found in the backup archive", id = 5047)
@@ -148,7 +148,7 @@ public interface Log extends BasicLogger {
    @Message(value = "%s '%s' does not exist", id = 5048)
    CacheException unableToFindResource(String resource, String resourceName);
 
-   @Message(value = "Unable to perform backup, backup already exists with name '%s'", id = 5049)
+   @Message(value = "Cannot perform backup, backup already exists with name '%s'", id = 5049)
    CacheException backupAlreadyExists(String name);
 
    @LogMessage(level = INFO)
