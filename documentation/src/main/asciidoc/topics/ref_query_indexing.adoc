@@ -1,0 +1,215 @@
+[id='indexing_values-{context}']
+= Indexing {brandname} Caches
+
+{brandname} uses link:http://lucene.apache.org/[Apache Lucene] technology to create indexes of values in caches.
+Indexing {brandname} caches dramatically improves search performance and enables full-text search capabilities.
+
+[NOTE]
+====
+Indexing can degrade write throughput for {brandname} clusters.
+
+However, {brandname} provides configurable attributes that can optimize query performance such as `commit-interval` and `refresh-interval`.
+When you start using indexing and querying capabilities, you should monitor statistics and adjust configuration to optimise queries to suit your use case.
+====
+
+To index caches, you create schema definitions in the following ways:
+
+* Annotate Java classes for embedded caches.
+* Define Protobuf schemas, `.proto` files, for caches on remote {brandname} servers.
+
+== Index Configuration
+You can enable and configure indexing in cache configuration either declaratively or programmatically.
+
+[NOTE]
+====
+Adding an `<indexing>` element without the `enabled` attribute automatically enables indexing, even though the default value of the `enabled` attribute is `false` in the XSD schema.
+
+In the programmatic config, you must call the `enabled()` method.
+====
+
+.Declaratively
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/indexing.xml[]
+----
+
+.Programmatically
+[source,java]
+----
+include::code_examples/IndexBasicConfiguration.java[]
+----
+
+== Indexed Entities
+You must specify entities to index in the cache configuration.
+
+.Declaratively
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/indexed_entities.xml[]
+----
+
+.Programmatically
+[source,java]
+----
+ cacheCfg.indexing()
+       .addIndexedEntity(Car.class)
+       .addIndexedEntity(Truck.class)
+----
+
+For caches that store POJOs, the configuration that declares indexed entities should contain each fully qualified class name that is annotated with `@Indexed`.
+
+For caches that store Protobuf-encoded entries, the indexed types should be the `Message` declared in the Protobuf schema.
+
+For example, consider the following schema:
+
+[source,proto]
+----
+include::code_examples/library.proto[]
+----
+
+The corresponding configuration for the Protobuf schema is as follows:
+
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/indexed_entities_proto.xml[]
+----
+
+== Index Storage
+
+{brandname} can store indexes in the file system or in memory (JVM Heap).
+File system is the recommended and the default configuration, and memory indexes should only be used for small to medium indexes that do not need to survive restart.
+
+.Configuration for file system indexes:
+
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/indexing_filesystem.xml[]
+----
+
+.Configuration for memory indexes:
+
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/indexing_local_heap.xml[]
+----
+
+== Index Reader
+
+{brandname} refreshes the index reader before performing a query.
+The default behavior is to refresh a reader before every search, provided the index changed since the last refresh.
+
+You can configure {brandname} to refresh the reader less frequently by using the `index-reader` configuration:
+
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/indexing_reader.xml[]
+----
+
+[NOTE]
+====
+The attribute `refresh-interval` defines the interval, in milliseconds, to refresh the index reader.
+
+The default value is `0`, which returns data in queries as soon as it is written to a cache.
+
+A value greater than zero results in some stale queries results but substantially increases throughput, especially in write-heavy scenarios.
+If you do not need data returned in queries as soon as it is written, you should adjust the refresh interval to improve query performance.
+====
+
+== Index Writer
+
+The index used by {brandname} is based on link:https://lucene.apache.org/[Apache Lucene] and is composed of one or more segments (a group of immutable files representing a searchable index) that can be merged over time for performance reasons.
+Merges are important because fewer segments usually means less overhead during searches, since index readers needs to take into account all segments to perform their work.
+
+Lucene indexes entries in two tiers: memory and storage. New entries go to the memory index first, and then when a flush happens, to the configured index storage. Periocally, Lucene performs a commit operation, creating a segment from the previously flushed data, making all the index changes permanent.
+
+The `index-writer` configuration offers the possibility to customize how flushes, commits and merges are performed.
+
+[NOTE]
+====
+The `index-writer` configuration is optional.
+The defaults should work for most cases and custom configurations should only be used to tune performance.
+====
+
+.Declaratively
+[source,xml,options="nowrap",subs=attributes+]
+----
+include::config_examples/index_writer.xml[]
+----
+
+.Programmatically
+[source,java]
+----
+include::code_examples/IndexWriterConfig.java[]
+----
+
+.Index writer attributes
+[%header,cols=2*]
+|===
+|Attribute
+|Description
+
+|`commit-interval`
+|Period in milliseconds that index changes that are buffered in memory are flushed to the index storage and a commit is performed. As this operation is costly, small values should be avoided. The default is 1000 ms (1 second).
+
+|`max-buffered-entries`
+|Maximum number of entries that can be buffered in-memory before they are flushed to the index storage. Large values mean faster indexing, but more RAM usage. When used together with `ram-buffer-size` a flush occurs for whichever event happens first.
+
+|`ram-buffer-size`
+|The maximum amount of RAM that may be used for buffering added entries and deletions before they are flushed to the index storage. Large values mean faster indexing, but more RAM usage. Generally for faster indexing performance it is best to use this setting rather than `max-buffered-entries`. When used together with `max-buffered-entries` a flush occurs for whichever event happens first.
+
+|`thread-pool-size`
+|Number of threads to execute write operations to the index.
+
+|`queue-count`
+|Number of internal queues to use for each indexed type. Each queue holds a batch of modifications that is applied to the index, and queues are processed in parallel. Increasing the number of queues will lead to an increase of indexing throughput, but only if the bottleneck is CPU. For optimum results, avoid `queue-count` larger than the `thread-pool-size`.
+
+|`queue-size`
+|The maximum number of elements each queue can hold. The larger the queue-size, more memory will be used during indexing operations. A value too small can increase the likelihood of blocking during indexing.
+
+|`low-level-trace`
+|Enables low level trace information about indexing operations. Causes a substantial performance penalty and should only be used as a last resource for troubleshooting.
+
+|===
+
+The `index-merge` sub-element defines how index segments are merged.
+
+.Index merge attributes
+[%header,cols=2*]
+|===
+|Attribute
+|Description
+
+|`max-entries`
+|Maximum number of entries that an index segment can have before merging. Segments with more than this number of entries are not merged. Smaller values perform better on frequently changing indexes, larger values provide better search performance if the index does not change often.
+
+|`factor`
+|Number of segments that are merged at once. With smaller values, merging happens more often, which uses more resources, but the total number of segments will be lower on average, increasing search performance. Larger values (greater than 10) are best for heavy writing scenarios.
+
+|`min-size`
+|Minimum target size of segments, in MB, for background merges. Segments smaller than this size are merged more aggressively. Setting a value that is too large might result in expensive merge operations, even though they are less frequent.
+
+|`max-size`
+|Maximum size of segments, in MB, for background merges. Segments larger than this size are never merged in the background. Settings this to a lower value helps reduce memory requirements and avoids some merging operations at the cost of optimal search speed.
+
+|`max-forced-size`
+|The maximum size of segments, in MB, for forced merges and overrides the `max-size` attribute. Set this to the same value as `max-size` or lower. However setting the value too low degrades search performance as documents are deleted.
+
+|`calibrate-by-deletes`
+|Whether the number of deleted entries in an index should be taken into account when counting the entries in the segment. Setting `false` will lead to more frequent merges caused by `max-docs`, but will more aggressively merge segments with many deleted documents, improving search performance.
+
+|===
+
+== Rebuilding Indexes
+
+Rebuilding an index reconstructs it from the data stored in the cache. You need to rebuild indexes if you change things like definitions of indexed types or analyzers. Likewise, you may need to rebuild indexes if they are deleted for some reason.
+
+[IMPORTANT]
+====
+Rebuilding indexes can take a long time to complete because the process takes place for all data in the grid.
+====
+
+[source,java]
+----
+Indexer indexer = Search.getIndexer(cache);
+CompletionStage<Void> future = index.run();
+----

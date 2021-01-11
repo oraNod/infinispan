@@ -1,0 +1,26 @@
+[id='query_statistics-{context}']
+= Query Statistics
+
+{brandname} exposes indexing and querying statistics through the `Search` entry point, which you can use programmatically as follows:
+
+[source,java]
+----
+// Statistics for the local cluster member
+SearchStatistics statistics = Search.getSearchStatistics(cache);
+
+// Consolidated statistics for the whole cluster
+CompletionStage<SearchStatisticsSnapshot> statistics = Search.getClusteredSearchStatistics(cache)
+----
+
+.Statistics via REST
+
+{brandname} Server also exposes index and query statistics via REST.
+
+Use the following invocation: `GET /v2/caches/{cacheName}/search/stats`
+
+.Checking index usage statistics
+
+Checking usage statistics for indexes can help you when tuning query performance.
+Start by using the exposed statistics to check the time taken for each type of query.
+Indexed queries should be faster, but some queries may be using the index only partially, in case a field in the schema is annotated as indexed, and others are not annotated.
+For optimal results, you should make sure that only fully indexed queries are executed, by double checking the correctness of entities and field mappings.

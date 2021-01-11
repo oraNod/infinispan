@@ -11,7 +11,7 @@ representations of the Java objects to marshall.
 +
 [source,proto]
 ----
-include::config_examples/library.proto[]
+include::code_examples/library.proto[]
 ----
 +
 The preceding `.library.proto` file defines an entity (Protobuf message type)

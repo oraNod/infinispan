@@ -1,0 +1,20 @@
+[id='search_api']
+:context: querying
+= Querying Values in Caches
+{brandname} lets you perform queries to efficiently and quickly look up values in your data set, both with embedded {brandname} clusters or remote {brandname} server clusters.
+
+[NOTE]
+====
+You can index and query cache values only stored as Plain Old Java Objects (POJOs) or objects encoded as link:https://developers.google.com/protocol-buffers/[Protocol Buffers].
+====
+
+include::{topics}/ref_query_indexing.adoc[leveloffset=+1]
+include::{topics}/ref_query_ickle.adoc[leveloffset=+1]
+include::{topics}/ref_query_embedded.adoc[leveloffset=+1]
+include::{topics}/ref_query_remote.adoc[leveloffset=+1]
+include::{topics}/ref_query_continuous.adoc[leveloffset=+1]
+include::{topics}/ref_query_statistics.adoc[leveloffset=+1]
+
+// Restore the parent context.
+ifdef::parent-context[:context: {parent-context}]
+ifndef::parent-context[:!context:]
