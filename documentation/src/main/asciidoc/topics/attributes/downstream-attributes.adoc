@@ -1,0 +1,8 @@
+//
+// Attributes for building downstream documentation.
+//
+
+//
+// Most attributes for downstream are available in a separate repository.
+// If you add an entry to community-attributes.adoc please also add it here.
+//
