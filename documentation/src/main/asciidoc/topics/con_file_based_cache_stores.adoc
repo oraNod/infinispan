@@ -1,0 +1,74 @@
+[id='file-stores_{context}']
+= File-Based Cache Stores
+
+File-based cache stores provide persistent storage on the local host filesystem where {brandname} is running.
+For clustered caches, file-based cache stores are unique to each {brandname} node.
+
+You should use file-based cache stores to persist data that overflows from memory when the data container exceeds size or time restrictions.
+
+[WARNING]
+====
+Never use filesystem-based cache stores on shared file systems, such as an NFS or Samba share, because they do not provide file locking capabilities and data corruption can occur.
+
+Additionally if you attempt to use transactional caches with shared file systems, unrecoverable failures can happen when writing to files during the commit phase.
+====
+
+[discrete]
+== Soft-Index File Stores
+
+The default implementation for file-based cache stores is `SoftIndexFileStore`.
+
+`SoftIndexFileStore` is a Java implementation that uses a variant of **B+
+Tree** that is cached in-memory using Java soft references.
+The **B+ Tree**, called `Index` is offloaded on the file system to a single file that is purged and rebuilt each time the cache store restarts.
+
+`SoftIndexFileStore` stores data in a set of files rather than a single file.
+When usage of any file drops below 50%, the entries in the file are overwritten to another file and the file is then deleted.
+
+`SoftIndexFileStore` persists data in a set of files that are written in an append-only method.
+For this reason, if you use `SoftIndexFileStore` on conventional magnetic disk, it does not need to seek when writing a burst of entries.
+
+Most structures in `SoftIndexFileStore` are bounded, so out-of-memory exceptions do not pose a risk.
+You can also configure limits for concurrently open files.
+
+By default the size of a node in the `Index` is limited to 4096 bytes.
+This size also limits the key length, more precisely the length of serialized keys, which means you cannot use keys longer than the size of the node, 15
+bytes.
+Additionally, key length is stored as "short", which limits key length to 32767 bytes.
+`SoftIndexFileStore` throws an exception if keys are longer after serialization occurs.
+
+`SoftIndexFileStore` cannot detect expired entries, which can lead to excessive usage of space on the file system .
+
+[NOTE]
+====
+The `AdvancedStore.purgeExpired()` method is not implemented in `SoftIndexFileStore`.
+====
+
+.Segmentation
+
+Soft-index file cache stores support segmentation and create a separate instance per segment, which results in multiple directories in the path you specify in the store configuration.
+Each directory is a number that represents the segment to which the data maps.
+
+[discrete]
+== Single File Cache Stores
+
+[NOTE]
+====
+Single file cache stores are now deprecated and planned for removal.
+====
+
+Single File cache stores, `SingleFileStore`, persist data to file.
+{brandname} also maintains an in-memory index of keys while keys and values are stored in the file.
+
+Because `SingleFileStore` keeps an in-memory index of keys and the location of values, it requires additional memory, depending on the key size and the number of keys.
+For this reason, `SingleFileStore` is not recommended for use cases where the keys have a large size.
+
+In some cases, `SingleFileStore` can also become fragmented.
+If the size of values continually increases, available space in the single file is not used but the entry is appended to the end of the file.
+Available space in the file is used only if an entry can fit within it.
+Likewise, if you remove all entries from memory, the single file store does not decrease in size or become defragmented.
+
+.Segmentation
+
+Single file cache stores support segmentation and create a separate instance per segment, which results in multiple directories in the path you configure.
+Each directory is a number that represents the segment to which the data maps.
