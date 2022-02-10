@@ -107,7 +107,7 @@ public interface Log extends BasicLogger {
    @Message(value = "The REST invocation [%s] has been deprecated. Please consult the upgrade guide", id = 12026)
    void warnDeprecatedCall(String invocation);
 
-   @Message(value = "Authorization is not enabled on this server", id = 12027)
+   @Message(value = "Security authorization is not enabled on this server.", id = 12027)
    String authorizationNotEnabled();
 
    @Message(value = "The principal-role mapper is not mutable", id = 12028)

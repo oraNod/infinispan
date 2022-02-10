@@ -22,7 +22,7 @@ import org.infinispan.client.rest.RestResponse;
  * @author Tristan Tarrant &lt;tristan@infinispan.org&gt;
  * @since 12.1
  **/
-@GroupCommandDefinition(name = "roles", description = "Manages security roles", activator = ConnectionActivator.class, groupCommands = {Roles.Ls.class, Roles.Grant.class, Roles.Deny.class, Roles.Create.class, Roles.Remove.class})
+@GroupCommandDefinition(name = "roles", description = "Manages user roles for security authorization", activator = ConnectionActivator.class, groupCommands = {Roles.Ls.class, Roles.Grant.class, Roles.Deny.class, Roles.Create.class, Roles.Remove.class})
 public class Roles extends CliCommand {
 
    @Option(shortName = 'h', hasValue = false, overrideRequired = true)
@@ -108,7 +108,7 @@ public class Roles extends CliCommand {
    @CommandDefinition(name = "create", description = "Creates a new role")
    public static class Create extends RestCliCommand {
 
-      @Argument(description = "The name of the role to create", required = true)
+      @Argument(description = "Provides a name for the new role", required = true)
       String name;
 
       @OptionList(shortName = 'p', required = true, completer = AuthorizationPermissionCompleter.class)
@@ -128,10 +128,10 @@ public class Roles extends CliCommand {
       }
    }
 
-   @CommandDefinition(name = "remove", aliases = {"rm"}, description = "Removes an existing role")
+   @CommandDefinition(name = "remove", aliases = {"rm"}, description = "Deletes an existing role.")
    public static class Remove extends RestCliCommand {
 
-      @Argument(description = "The name of the role to remove", required = true, completer = RolesCompleter.class)
+      @Argument(description = "Specifies the role to delete.", required = true, completer = RolesCompleter.class)
       String name;
 
       @Option(shortName = 'h', hasValue = false, overrideRequired = true)
