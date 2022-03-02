@@ -1,7 +1,7 @@
 package org.infinispan.metrics.impl;
 
 import java.net.InetAddress;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -119,7 +119,6 @@ public class MetricsCollector implements Constants {
       Set<Object> metricIds = new HashSet<>(attributes.size());
 
       GlobalMetricsConfiguration metricsCfg = globalConfig.metrics();
-
       int numTags = 1;
       if (cacheManagerTag != null) {
          numTags++;
@@ -127,12 +126,19 @@ public class MetricsCollector implements Constants {
             numTags++;
          }
       }
-      Tag[] tags = new Tag[numTags];
-      tags[0] = nodeTag;
+
+      ArrayList<Tag> tags = new ArrayList<>(numTags);
+      if (nodeTag != null) {
+         // in some case this can be null,
+         // e.g. if it is called:
+         // from org.infinispan.remoting.transport.jgroups.JGroupsTransport.lambda$channelConnected
+         tags.add(nodeTag);
+      }
+
       if (cacheManagerTag != null) {
-         tags[1] = cacheManagerTag;
+         tags.add(cacheManagerTag);
          if (cacheName != null) {
-            tags[2] = Tag.of(CACHE_TAG_NAME, cacheName);
+            tags.add(Tag.of(CACHE_TAG_NAME, cacheName));
          }
       }
 
@@ -146,7 +152,7 @@ public class MetricsCollector implements Constants {
             if (getter != null) {
                if (metricsCfg.gauges()) {
                   Gauge gauge = Gauge.builder(metricName, getter)
-                        .tags(Arrays.asList(tags))
+                        .tags(tags)
                         .strongReference(true)
                         .description(attr.getDescription())
                         .register(registry);
@@ -161,7 +167,7 @@ public class MetricsCollector implements Constants {
             } else {
                if (metricsCfg.histograms()) {
                   Timer timer = Timer.builder(metricName)
-                        .tags(Arrays.asList(tags))
+                        .tags(tags)
                         .description(attr.getDescription())
                         .register(registry);
 
@@ -179,7 +185,7 @@ public class MetricsCollector implements Constants {
 
       if (log.isTraceEnabled()) {
          log.tracef("Registered %d metrics. Metric registry @%x contains %d metrics.",
-                    metricIds.size(), System.identityHashCode(registry), registry.getMeters().size());
+               metricIds.size(), System.identityHashCode(registry), registry.getMeters().size());
       }
 
       return metricIds;
@@ -190,10 +196,10 @@ public class MetricsCollector implements Constants {
       if (log.isTraceEnabled()) {
          if (removed != null) {
             log.tracef("Unregistered metric \"%s\". Metric registry @%x contains %d metrics.",
-                       metricId, System.identityHashCode(registry), registry.getMeters().size());
+                  metricId, System.identityHashCode(registry), registry.getMeters().size());
          } else {
             log.tracef("Could not remove unexisting metric \"%s\". Metric registry @%x contains %d metrics.",
-                       metricId, System.identityHashCode(registry), registry.getMeters().size());
+                  metricId, System.identityHashCode(registry), registry.getMeters().size());
          }
       }
    }
