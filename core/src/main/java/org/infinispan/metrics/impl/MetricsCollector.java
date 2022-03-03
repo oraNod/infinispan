@@ -26,9 +26,9 @@ import org.infinispan.util.logging.LogFactory;
 
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.Meter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 
 /**
  * Keeps a reference to the Micrometer MeterRegistry. Optional component in component registry. Availability based on
@@ -43,7 +43,8 @@ public class MetricsCollector implements Constants {
 
    private static final Log log = LogFactory.getLog(MetricsCollector.class);
 
-   private final MeterRegistry registry;
+   private final PrometheusMeterRegistry baseRegistry;
+   private final PrometheusMeterRegistry vendorRegistry;
 
    private Tag nodeTag;
 
@@ -55,12 +56,17 @@ public class MetricsCollector implements Constants {
    @Inject
    ComponentRef<Transport> transportRef;
 
-   protected MetricsCollector(MeterRegistry registry) {
-      this.registry = registry;
+   protected MetricsCollector(PrometheusMeterRegistry baseRegistry, PrometheusMeterRegistry vendorRegistry) {
+      this.baseRegistry = baseRegistry;
+      this.vendorRegistry = vendorRegistry;
    }
 
-   public MeterRegistry getRegistry() {
-      return registry;
+   public PrometheusMeterRegistry getBaseRegistry() {
+      return baseRegistry;
+   }
+
+   public PrometheusMeterRegistry getVendorRegistry() {
+      return vendorRegistry;
    }
 
    @Start
@@ -155,7 +161,7 @@ public class MetricsCollector implements Constants {
                         .tags(tags)
                         .strongReference(true)
                         .description(attr.getDescription())
-                        .register(registry);
+                        .register(vendorRegistry);
 
                   Meter.Id id = gauge.getId();
 
@@ -169,7 +175,7 @@ public class MetricsCollector implements Constants {
                   Timer timer = Timer.builder(metricName)
                         .tags(tags)
                         .description(attr.getDescription())
-                        .register(registry);
+                        .register(vendorRegistry);
 
                   Meter.Id id = timer.getId();
 
@@ -185,21 +191,21 @@ public class MetricsCollector implements Constants {
 
       if (log.isTraceEnabled()) {
          log.tracef("Registered %d metrics. Metric registry @%x contains %d metrics.",
-               metricIds.size(), System.identityHashCode(registry), registry.getMeters().size());
+               metricIds.size(), System.identityHashCode(vendorRegistry), vendorRegistry.getMeters().size());
       }
 
       return metricIds;
    }
 
    public void unregisterMetric(Object metricId) {
-      Meter removed = registry.remove((Meter.Id) metricId);
+      Meter removed = vendorRegistry.remove((Meter.Id) metricId);
       if (log.isTraceEnabled()) {
          if (removed != null) {
             log.tracef("Unregistered metric \"%s\". Metric registry @%x contains %d metrics.",
-                  metricId, System.identityHashCode(registry), registry.getMeters().size());
+                  metricId, System.identityHashCode(vendorRegistry), vendorRegistry.getMeters().size());
          } else {
             log.tracef("Could not remove unexisting metric \"%s\". Metric registry @%x contains %d metrics.",
-                  metricId, System.identityHashCode(registry), registry.getMeters().size());
+                  metricId, System.identityHashCode(vendorRegistry), vendorRegistry.getMeters().size());
          }
       }
    }
