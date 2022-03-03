@@ -1,0 +1,10 @@
+server:
+  endpoints:
+    endpoint:
+      socketBinding: "default"
+      securityRealm: "default"
+      respConnector:
+        cache: "mycache"
+        authentication: ~
+      hotrodConnector: ~
+      restConnector: ~

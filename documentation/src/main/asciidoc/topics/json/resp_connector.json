@@ -1,0 +1,16 @@
+{
+  "server": {
+    "endpoints": {
+      "endpoint": {
+        "socket-binding": "default",
+        "security-realm": "default",
+        "resp-connector": {
+          "cache": "mycache",
+          "authentication": {}
+        },
+        "hotrod-connector": {},
+        "rest-connector": {}
+      }
+    }
+  }
+}
