@@ -128,6 +128,8 @@ public class LifecycleManager implements ModuleLifecycle {
                BasicComponentRegistry bcr = cr.getComponent(BasicComponentRegistry.class);
                bcr.replaceComponent(IndexStatistics.class.getName(), new LocalIndexStatistics(), true);
                bcr.rewire();
+
+               IndexStartupActivator.create(searchMapping, massIndexer, cfg).run();
             }
          }
 
