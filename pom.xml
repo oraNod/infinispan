@@ -326,6 +326,7 @@
       <versionx.org.apache.maven.plugin-tools.maven-plugin-annotations>3.6.4</versionx.org.apache.maven.plugin-tools.maven-plugin-annotations>
       <versionx.org.aspectj.aspectjweaver>1.8.1</versionx.org.aspectj.aspectjweaver>
       <versionx.org.assertj.assertj-core>3.4.1</versionx.org.assertj.assertj-core>
+      <versionx.org.awaitily>4.2.0</versionx.org.awaitily>
       <versionx.org.codehaus.plexus.plexus-utils>3.1.0</versionx.org.codehaus.plexus.plexus-utils>
       <versionx.org.codehaus.mojo.versions-maven-plugin>2.7</versionx.org.codehaus.mojo.versions-maven-plugin>
       <versionx.org.dom4j.dom4j>2.1.3</versionx.org.dom4j.dom4j>
@@ -995,6 +996,12 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${versionx.org.assertj.assertj-core}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${versionx.org.awaitily}</version>
             <scope>test</scope>
          </dependency>
          <!-- Dependency of org.hibernate:hibernate-core. Overwrite verison to 2.1.3 -->
