@@ -3,8 +3,7 @@ name: Synchronize changes to the website
 on:
   push:
     branches:
-      - 'main'
-      - '13.0.x'
+      - 'gh-actions'
     paths:
       - 'documentation/**'
 
@@ -31,15 +30,10 @@ jobs:
         name: infinispan/infinispan.github.io
         ref: master
 
-    - if: github.ref == 'refs/heads/main'
+    - if: github.ref == 'refs/heads/gh-actions'
       name: Copy docs to dev
       run: |
         cp -r infinispan/documentation/target/generated/1*/html/* infinispan.github.io/docs/dev/
-
-    - if: github.ref == 'refs/heads/13.0.x'
-      name: Copy docs to stable
-      run: |
-        cp -r documentation/target/generated/1*/html/* infinispan.github.io/docs/stable/
 
     - name: Commit and push changes
       run: |
