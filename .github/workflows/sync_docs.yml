@@ -22,7 +22,9 @@ jobs:
         cache: maven
 
     - name: Build docs with Maven
-      run: mvn install -Pdistribution -pl documentation -am -s maven-settings.xml
+      run: |
+        cd documentation
+        mvn clean package -s ../maven-settings.xml
 
     - name: Clone infinispan.github.io
       uses: actions/checkout@master
@@ -33,7 +35,7 @@ jobs:
     - if: github.ref == 'refs/heads/gh-actions'
       name: Copy docs to dev
       run: |
-        cp -r infinispan/documentation/target/generated/1*/html/* infinispan.github.io/docs/dev/
+        cp -r target/generated/1*/html/* infinispan.github.io/docs/dev/
 
     - name: Commit and push changes
       run: |
