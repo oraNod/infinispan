@@ -5,7 +5,7 @@
 {brandname} events to CloudEvents events and sends them to a Kafka topic
 in structured mode, with the JSON format.
 
-This allows Infinispan be further used as a Knative source.
+This allows Infinispan to be further used as a Knative source.
 
 There are two broad kinds of events, and they can be sent to different
 Kafka topics:
