@@ -31,10 +31,15 @@ jobs:
         ref: master
         path: infinispan.github.io
 
+    - name: Show me
+      run: |
+        ls -1
+        ls documentation
+
     - if: github.ref == 'refs/heads/gh-actions'
       name: Copy docs to dev
       run: |
-        cp -r target/generated/1*/html/* infinispan.github.io/docs/dev/
+        cp -r documentation/target/generated/1*/html/* infinispan.github.io/docs/dev/
 
     - name: Commit and push changes
       run: |
