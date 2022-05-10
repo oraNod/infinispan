@@ -1,5 +1,5 @@
 [id='cache-templates_{context}']
-= Cache template inheritance
+= Cache template inheritanze
 
 Cache configuration templates can inherit from other templates to extend and override settings.
 
