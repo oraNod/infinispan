@@ -1,6 +1,6 @@
 # Infinispan Documentation
 
-Tips to get started with this really, really great Infinispan documentation.
+Tips to get started with this great Infinispan documentation.
 
 ## Documentation Guidelines
 
